@@ -1,10 +1,10 @@
 # General-Framework-for-Prevalence-Estimation
 
-This repository provides R programs (and associated FORTRAN DLL's) of the article titled, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." A user-friendly R function "multDiseaseBayes" is provided to fit the proposed estimation methods, Bayesian estimation and maximum a posteriori (MAP) estimation, for any group testing algorithms involving multiplex assays. For efficient execution, compute-intensive parts of the program are written in FORTRAN and called from R through three DLL files, gbbstwodisgen.dll, mapacrtwodgen.dll, and ytiltwodbayes.dll, which work in a 64-bit R package. The R function with documentation and illustrative examples is  provided in the file: MainProgram.R
+This repository provides R programs of the article, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." An R function "multDiseaseBayes" is provided to fit the proposed Bayesian estimation method and maximum a posteriori (MAP) estimation method, which can accommodate ANY group testing data involving multiplex assays and provide cost-effective estimates for the prevalence of multiple diseases.  in the file "MainProgram.R"
 
-MainProgram.R - file that consists of the main R function combining the R subfunctions and FORTRAN subroutines.
+MainProgram.R - file that consists of the main R function combining the R subfunctions and FORTRAN subroutines. Documentation with illustrative (simulation) examples is also provided. 
+
 SupportPrograms.txt - file that consists of standalone, executable R functions.
 
-Note: The DLL files, gbbstwodisgen.dll, mapacrtwodgen.dll, and ytiltwodbayes.dll, are combiled subroutines written in a FORTRAN 95 compiler. 
-
+Note: For efficient execution, compute-intensive parts of the program are written in FORTRAN 95 and called from R through three DLL files, gbbstwodisgen.dll, mapacrtwodgen.dll, and ytiltwodbayes.dll, which work in a 64-bit R package. 
 
