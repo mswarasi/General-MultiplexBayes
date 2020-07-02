@@ -124,7 +124,7 @@ multDiseaseBayes <- function( p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),Z,
 ##################################################
 
 ## Specify the working directory
-setwd("C:/Users/msarker/Desktop/MultiStage/MultCode_052520/Testing_code_062620/multCode4GitHub_062920")
+setwd(dir = "C:\\programs")
 
 ## Import source files
 source("SupportPrograms.txt")
@@ -152,7 +152,7 @@ T <- out$T
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                   Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),N0=0,a0=0,
                   b0=0,acr.info=matrix(0,2,4),emGit=15000,emburn=5000,
-				  emmaxit=200,emtol=1e-04,method="MAP",accuracy="unknown")
+	          emmaxit=200,emtol=1e-04,method="MAP",accuracy="unknown")
 
 ## MAP Results (equivalent to MLE with these flat priors):
 # > res
@@ -206,7 +206,7 @@ apply(res$accuracy[-(1:burn),],2,sd)
 # MAP with known accuracies and flat Dirichlet
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
                   S=length(design),N0=0,a0=0,emGit=15000,emburn=5000,
-				  emmaxit=100,emtol=1e-04,method="MAP",accuracy="known")
+	          emmaxit=100,emtol=1e-04,method="MAP",accuracy="known")
 
 # Bayesian with known accuracies and flat Dirichlet
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
