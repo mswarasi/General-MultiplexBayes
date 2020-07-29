@@ -32,7 +32,9 @@
 # Z        : A matrix of the observed group testing data, Z. See the details.
 # Yt       : A N by 2 matrix of the individual true binary statuses.
 # N        : The number of individuals tested (i.e., sample size).
-# S        : The maximum number of times an individual may be tested in pools or individually.
+# S        : The maximum number of times an individual may be tested in pools or individually. 
+#            For example, S for a hierarchical algorithm is the number of hierarchical stages 
+#            and S is 3 for a two-dimensional array algorithm. 
 # N0       : The historical data sample size to elicit Dirichlet power prior for p.
 # a0       : A precision parameter for the Dirichlet prior, where 0<= a0 <= 1.
 # b0       : A precision parameter for the beta power prior of delta; 0 <= b0 <= 1.
