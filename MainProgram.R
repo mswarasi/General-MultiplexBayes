@@ -32,8 +32,7 @@
 # Z        : A matrix of the observed group testing data, Z. See the details.
 # Yt       : A N by 2 matrix of the individual true binary statuses.
 # N        : The number of individuals tested (i.e., sample size).
-# S        : The maximum number of stages; i.e., the maximum number of times the 
-#            individuals are tested.
+# S        : The maximum number of times an individual may be tested. For 2-dim array, S=3.
 # N0       : The historical data sample size to elicit Dirichlet power prior for p.
 # a0       : A precision parameter for the Dirichlet prior, where 0<= a0 <= 1.
 # b0       : A precision parameter for the beta power prior of delta; 0 <= b0 <= 1.
@@ -201,7 +200,7 @@ apply(res$accuracy[-(1:burn),],2,sd)
 ## Also try other designs and estimation settings
 # design <- c(5,1)        # Two-stage hierarchical
 # design <- c(18,6,3,1)   # Four-stage hierarchical
-# design <- c(11,1)       # Two-dimensional array
+# design <- c(11,11,1)    # Two-dimensional array
 
 # MAP with known accuracies and flat Dirichlet
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
