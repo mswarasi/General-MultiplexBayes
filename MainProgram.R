@@ -98,7 +98,7 @@
 #
 multDiseaseBayes <- function( p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),Z,
                               Yt=matrix(0,N,2),N,S,N0=0,a0=0,b0=0,acr.info=matrix(0,2,4),
-                              postGit=6000,emGit=6000,emburn=1000,emmaxit=100,emtol=1e-04,
+                              postGit=6000,emGit=6000,emburn=1000,emmaxit=100,emtol=1e-03,
                               method=c("MAP","Bayesian"),accuracy=c("unknown","known")){
   method <- match.arg(method)
   accuracy <- match.arg(accuracy)
@@ -202,14 +202,18 @@ apply(res$accuracy[-(1:burn),],2,sd)
 ## Also try other designs and estimation settings
 # design <- c(5,1)        # Two-stage hierarchical
 # design <- c(18,6,3,1)   # Four-stage hierarchical
-# design <- c(11,11,1)    # Two-dimensional array
 
-# MAP with known accuracies and flat Dirichlet
+## For a two-dimensional array of dimensions 11x11, try
+design <- c(11,11,1)    
+out <- array.2dim.data(p,N,design,Se,Sp)
+Z <- out$Data
+T <- out$T
+## MAP with known accuracies and flat Dirichlet
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
                   S=length(design),N0=0,a0=0,emGit=15000,emburn=5000,
-	          emmaxit=100,emtol=1e-04,method="MAP",accuracy="known")
+	          emmaxit=100,emtol=1e-03,method="MAP",accuracy="known")
 
-# Bayesian with known accuracies and flat Dirichlet
+## Bayesian with known accuracies and flat Dirichlet
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
                   S=length(design),N0=0,a0=0,postGit=15000,method="Bayesian",
                   accuracy="known")
