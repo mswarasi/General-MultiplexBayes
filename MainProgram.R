@@ -134,7 +134,6 @@ source("TwoStageArrayData.txt")
 
 ##################################################
 
-
 # Examples from Section 5 of the article
 # --------------------------------------
 
@@ -152,19 +151,20 @@ T <- out$T
 ## MAP estimation with unknown accuracies and flat priors
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                   Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),N0=0,a0=0,
-                  b0=0,acr.info=matrix(0,2,4),emGit=15000,emburn=5000,
-	          emmaxit=200,emtol=1e-04,method="MAP",accuracy="unknown")
+                  b0=0,acr.info=matrix(0,2,4),emGit=12000,emburn=2000,
+	          emmaxit=200,emtol=1e-03,method="MAP",accuracy="unknown")
 
 ## MAP Results (equivalent to MLE with these flat priors):
 # > res
 # $prevalence
-# [1] 0.95242612 0.01885368 0.01903360 0.00968660
-# 
+# [1] 0.95234086 0.01895446 0.01899814 0.00970654
+
 # $accuracy
-# [1] 0.9394198 0.9526531 0.9952553 0.9924425
-# 
+# [1] 0.9379753 0.9526409 0.9955003 0.9923724
+
 # $convergence
 # [1] 0
+
 
 set.seed(123)
 out <- hier.alg.data(p,N,design,Se,Sp)
@@ -182,22 +182,27 @@ colMeans( res$prevalence[-(1:burn), ] )
 colMeans( res$accuracy[-(1:burn), ] )
 apply(res$prevalence[-(1:burn),],2,sd)
 apply(res$accuracy[-(1:burn),],2,sd)
-#
+
+## Bayesian results:
+
+# > burn <- 2000   # burn-in period
+
 # > colMeans( res$prevalence[-(1:burn), ] )
 #         p00         p10         p01         p11 
-# 0.951712405 0.019132936 0.019277557 0.009877102 
-#
+# 0.951748090 0.019118464 0.019272705 0.009860741 
+
 # > colMeans( res$accuracy[-(1:burn), ] )
 #       Se1       Se2       Sp1       Sp2 
-# 0.9361918 0.9493255 0.9943147 0.9916562 
-#
+# 0.9362821 0.9494646 0.9943489 0.9916391 
+
 # > apply(res$prevalence[-(1:burn),],2,sd)
 #         p00         p10         p01         p11 
-# 0.003297922 0.002194269 0.002149631 0.001407028 
-# 
+# 0.003296814 0.002168847 0.002141731 0.001408937 
+
 # > apply(res$accuracy[-(1:burn),],2,sd)
 #         Se1         Se2         Sp1         Sp2 
-# 0.017049577 0.014261079 0.002965814 0.003327777 
+# 0.016875732 0.014248242 0.002942277 0.003309463 
+
 
 ## Also try other designs and estimation settings
 # design <- c(5,1)        # Two-stage hierarchical
@@ -208,6 +213,7 @@ design <- c(11,11,1)
 out <- array.2dim.data(p,N,design,Se,Sp)
 Z <- out$Data
 T <- out$T
+
 ## MAP with known accuracies and flat Dirichlet
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
                   S=length(design),N0=0,a0=0,emGit=15000,emburn=5000,
@@ -217,6 +223,4 @@ res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
                   S=length(design),N0=0,a0=0,postGit=15000,method="Bayesian",
                   accuracy="known")
-
-
 
