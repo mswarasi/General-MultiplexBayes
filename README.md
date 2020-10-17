@@ -24,8 +24,7 @@ source("SupportPrograms.txt")
 source("MultistageHierarchicalData.txt")
 source("TwoStageArrayData.txt")
 
-## Some examles from Section 5 of the article 
-## with one diagnostic assay, L = 1, as follows.
+## Examles from Section 5 of the article with one assay, L = 1, are as follows.
 
 ## Simulation configuration I:
 N <- 5000
