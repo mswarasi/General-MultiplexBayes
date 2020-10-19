@@ -21,21 +21,30 @@ setwd(dir = "C:\\programs")
 
 ## Import source files
 source("SupportPrograms.txt")
+
 source("MultistageHierarchicalData.txt")
+
 source("TwoStageArrayData.txt")
 
 ## Examles from Section 5 of the article with one assay, L = 1, are as follows.
 
 ## Simulation configuration I:
 N <- 5000
+
 p <- c(.95,.02,.02,.01)
+
 Se <- c(.95,.95)
+
 Sp <- c(.99,.99)
+
 design <- c(9,3,1)  # Three-stage hierarchical design
 
 set.seed(123)
+
 out <- hier.alg.data(p,N,design,Se,Sp)
+
 Z <- out$Data
+
 T <- out$T
 
 ## MAP estimation with unknown accuracies and flat priors
@@ -46,19 +55,26 @@ res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
 
 ## MAP Results (equivalent to MLE with these flat priors):
 > res
+
 # $prevalence
+
 [1] 0.95234086 0.01895446 0.01899814 0.00970654
 
 # $accuracy
+
 [1] 0.9379753 0.9526409 0.9955003 0.9923724
 
 # $convergence
+
 [1] 0
 
 
 set.seed(123)
+
 out <- hier.alg.data(p,N,design,Se,Sp)
+
 Z <- out$Data
+
 T <- out$T
 
 ## Bayesian estimates with unknown accuracies and flat priors
@@ -69,39 +85,57 @@ res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
 
 ## Bayesian results:
 burn <- 5000   # burn-in period
+
 colMeans( res$prevalence[-(1:burn), ] )
+
 colMeans( res$accuracy[-(1:burn), ] )
+
 apply(res$prevalence[-(1:burn),],2,sd)
+
 apply(res$accuracy[-(1:burn),],2,sd)
 
 ## Bayesian results:
+
 > burn <- 2000   # burn-in period
 
 > colMeans( res$prevalence[-(1:burn), ] )
+
      p00         p10         p01         p11 
+     
 0.951748090 0.019118464 0.019272705 0.009860741 
 
 > colMeans( res$accuracy[-(1:burn), ] )
+
      Se1       Se2       Sp1       Sp2 
+     
 0.9362821 0.9494646 0.9943489 0.9916391 
 
 > apply(res$prevalence[-(1:burn),],2,sd)
+
      p00         p10         p01         p11 
+     
 0.003296814 0.002168847 0.002141731 0.001408937 
 
 > apply(res$accuracy[-(1:burn),],2,sd)
+
      Se1         Se2         Sp1         Sp2 
+     
 0.016875732 0.014248242 0.002942277 0.003309463 
 
 
 ## Also try other designs and estimation settings
+
 design <- c(5,1)        # Two-stage hierarchical
+
 design <- c(18,6,3,1)   # Four-stage hierarchical
 
 ## For a two-dimensional array of dimensions 11x11, try
 design <- c(11,11,1)    
+
 out <- array.2dim.data(p,N,design,Se,Sp)
+
 Z <- out$Data
+
 T <- out$T
 
 ## MAP with known accuracies and flat Dirichlet
