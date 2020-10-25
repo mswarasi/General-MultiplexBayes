@@ -17,9 +17,7 @@ Warasi, M., McMahan, C., Tebbs, J., and Bilder, C. (2020+). Estimating the preva
 
 ################## R function with simulation examples ##################
 
-## General-purpose estimation with multiplex assays. This function implements the EM algorithm (MAP estimation) and the posterior sampling algorithm from multiplex group testing data and works with two infections (i.e., K = 2) and one multiplex assay (i.e., L = 1). For more information, see the simulation setting in the article (Section 5).
-
-## Usage: 
+## Usage
 
 multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                       Z,Yt=matrix(0,N,2),N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
@@ -191,11 +189,16 @@ burn <- 2000            # burn-in period
 pick <- seq(1,10000,5)  # thinning
 
 > colMeans( res$prevalence[-(1:burn), ][pick, ] )
+
      p00         p10         p01         p11 
+     
 0.954443997 0.017813911 0.018389059 0.009353033 
 
+
 > apply( res$prevalence[-(1:burn), ][pick, ], 2, sd  )
+
      p00         p10         p01         p11 
+     
 0.002954447 0.001928380 0.001923174 0.001411674 
 
 
