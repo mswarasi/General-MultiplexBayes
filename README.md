@@ -47,7 +47,7 @@ Se <- c(.95,.95)
 
 Sp <- c(.99,.99)
 
-## Example 1: Hierarchical Protocal. MAP with unknown accuracies and flat priors:
+## Example 1: Hierarchical Protocol. MAP with unknown accuracies and flat priors:
 
 set.seed(123)
 
@@ -80,7 +80,7 @@ res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
 [1] 0
 
 
-## Example 2: Hierarchical Protocal. MAP with unknown accuracies and flat priors:
+## Example 2: Hierarchical Protocol. MAP with unknown accuracies and flat priors:
 
 set.seed(123)
 
