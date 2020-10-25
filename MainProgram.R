@@ -229,3 +229,5 @@ res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
                   S=length(design),N0=0,a0=0,postGit=15000,method="Bayesian",
                   accuracy="known")
+
+
