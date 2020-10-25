@@ -47,9 +47,11 @@ Se <- c(.95,.95)
 
 Sp <- c(.99,.99)
 
-design <- c(9,3,1)  # Three-stage hierarchical design
+## Example 1: Hierarchical Protocal. MAP with unknown accuracies and flat priors:
 
 set.seed(123)
+
+design <- c(9,3,1)  # Three-stage hierarchical design
 
 out <- hier.alg.data(p,N,design,Se,Sp)
 
@@ -57,14 +59,12 @@ Z <- out$Data   # Simulated pooling data
 
 T <- out$T      # The number of tests expended in the simulation
 
-## MAP estimation with unknown accuracies and flat priors
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                   Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
                   Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
                   emGit=12000,emburn=2000,emmaxit=200,emtol=1e-03,
                   method="MAP",accuracy="unknown")
 
-## MAP Results (equivalent to MLE with these flat priors):
 > res
 
 # $prevalence
@@ -80,19 +80,21 @@ res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
 [1] 0
 
 
+## Example 2: Hierarchical Protocal. MAP with unknown accuracies and flat priors:
+
 set.seed(123)
+
+design <- c(9,3,1)  # Three-stage hierarchical design
 
 out <- hier.alg.data(p,N,design,Se,Sp)
 
-Z <- out$Data
+Z <- out$Data   # Simulated pooling data
 
-## Mean estimation with unknown accuracies and flat priors:
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                   Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
                   Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
                   postGit=12000,method="Mean",accuracy="unknown")
 
-## Mean estimation results:
 burn <- 2000            # burn-in period
 
 pick <- seq(1,10000,5)  # thinning
@@ -141,7 +143,8 @@ design <- c(5,1)        # Two-stage hierarchical
 design <- c(18,6,3,1)   # Four-stage hierarchical
 
 
-## For a two-dimensional array of dimensions 11x11:
+## Example 3: Array Protocol. MAP with known accuracies and flat Dirichlet:
+
 set.seed(123)
 
 design <- c(11,11,1)    
@@ -150,13 +153,11 @@ out <- array.2dim.data(p,N,design,Se,Sp)
 
 Z <- out$Data
 
-# # Array: MAP with known accuracies and flat Dirichlet:
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),
                         N=N,S=length(design),p.pr=rep(1,4),
                         emGit=12000,emburn=2000,emmaxit=200,emtol=1e-03,
                         method="MAP",accuracy="known")
 
-# MAP estimation results:
 > res
 
 # $prevalence
@@ -169,7 +170,8 @@ NULL
 [1] 0
 						
 
-## For a two-dimensional array of dimensions 11x11:
+## Example 4: Array Protocol. Mean with known accuracies and flat Dirichlet:
+
 set.seed(123)
 
 design <- c(11,11,1)    
@@ -178,12 +180,10 @@ out <- array.2dim.data(p,N,design,Se,Sp)
 
 Z <- out$Data
 
-## Array: Mean with known accuracies and flat Dirichlet:
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                   Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
                   postGit=12000,method="Mean",accuracy="known")
 
-## Mean estimation results:
 burn <- 2000            # burn-in period
 
 pick <- seq(1,10000,5)  # thinning
