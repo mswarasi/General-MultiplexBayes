@@ -1,32 +1,26 @@
-
 #************************************************************************#
 # Description
 # -----------
-# General-purpose estimation of the prevalence of multiple diseases 
-# using group testing outcomes. This function implements the EM algorithm 
-# (MAP estimation) and Bayesian estimation techniques provided in the article 
-# "Estimating the prevalence of two or more diseases using outcomes from 
-# multiplex group testing," by Warasi et al. (2020+). The function works with 
-# the simulation setting described in the article (Section 5), which involves 
-# two infections (i.e., K = 2) such as chlamydia and gonorrhea and one 
-# multiplex assay (i.e., L = 1) such as the Aptima Combo 2 Assay. Works with 
-# any group testing data involving two infections. Date: 06/29/2020.
+# General-purpose estimation with multiplex assays. This function implements 
+# the EM algorithm (MAP estimation) and the posterior sampling algorithm in 
+# the article, "Estimating the prevalence of two or more diseases using outcomes 
+# from multiplex group testing," by Warasi et al. (2020+). The function works 
+# with two infections (i.e., K = 2) and one multiplex assay (i.e., L = 1). 
+# See the simulation setting in the article (Section 5).
 #
 #
 # Usage
 # -----
-# multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
-#                  Z,Yt=matrix(0,N,2),N,S,N0=0,a0=0,b0=0,acr.info=
-#                  matrix(0,2,4),postGit=6000,emGit=6000,emburn=1000,
-#                  emmaxit=100,emtol=1e-04,method=c("MAP","Bayesian"),
-#                  accuracy=c("unknown","known"))
+# multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),Z,
+#                  Yt=matrix(0,N,2),N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
+#                  Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),postGit=6000,
+#                  emGit=6000,emburn=1000,emmaxit=200,emtol=1e-03,
+#                  method=c("MAP","Mean"),accuracy=c("unknown","known"))
 #
 #
 # Arguments
 # ---------
-# p0       : The initial value of p=(p00,p10,p01,p11), 
-#            an estimate from historical data. Note that $p_0$ is also used 
-#            in the Dirichlet power prior.  
+# p0       : The initial value of p=(p00,p10,p01,p11), an estimate from historical data.  
 # delta0   : The initial value of delta, an estimate from the assay product 
 #            literature. This is used only when the assay accuracies are unknown.
 # Z        : A matrix of the observed group testing data, Z. See the details.
@@ -35,16 +29,17 @@
 # S        : The maximum number of times an individual may be tested in pools or individually. 
 #            For example, S for a hierarchical algorithm is the number of hierarchical stages 
 #            and S is 3 for a two-dimensional array algorithm. 
-# N0       : The historical data sample size to elicit Dirichlet power prior for p.
-# a0       : A precision parameter for the Dirichlet prior, where 0<= a0 <= 1.
-# b0       : A precision parameter for the beta power prior of delta; 0 <= b0 <= 1.
-# acr.info : A 2 by 4 matrix of assay performance data. Used in the beta prior elicitation.
-# postGit  : The number of Gibbs samples to be drawn from the posterior distribution.
-# emGit    : The number of Gibbs samples to approximate expectations in the EM algorithm.
-# emburn   : The initial Gibbs samples to be discarded as a burn-in period in the EM algorithm.
-# emmaxit  : The maximum number of iteration in the EM algorithm.
+# p.pr     : Dirichlet prior for p.
+# Se1.pr   : Beta prior for Se1.
+# Se2.pr   : Beta prior for Se2.
+# Sp1.pr   : Beta prior for Sp1.
+# Sp2.pr   : Beta prior for Sp2.
+# postGit  : The number of Gibbs samples to be drawn from the posterior dist.
+# emGit    : The number of Gibbs samples to be used in the EM algorithm.
+# emburn   : The initial Gibbs samples to be discarded in the EM algorithm.
+# emmaxit  : The maximum number of iterations the EM algorithm can run.
 # emtol    : The convergence tolerance used in the EM algorithm.
-# method   : The estimation method to be used, either "MAP" or "Bayesian". Defaults to "MAP".
+# method   : The estimation method to be used, either "MAP" or "Mean". Defaults to "MAP".
 # accuracy : Whether the assay accuracies are known or unknown. Defaults to "unknown".
 #
 #
@@ -53,9 +48,11 @@
 # Compute-intensive parts of the program are written in FORTRAN and called from R through 
 # three DLL files, gbbstwodisgen.dll, mapacrtwodgen.dll, and ytiltwodbayes.dll, which work 
 # in a 64-bit R package. To use the R function, download the DLL's, save them in a  
-# folder in the computer, and specify the working directory. The observed data matrix, Z,
-# needs to be in the manner shown below. For illustration, we show part of a three-stage
-# hierarchical pooling data using design 6:2:1.
+# folder in the computer, and specify the working directory. 
+#
+#
+# The observed data matrix, Z, needs to be in the manner shown below. For illustration, 
+# we show part of a three-stage hierarchical pooling data using design 6:2:1.
 #
 # > head( Z )
 #        Z1 Z2 psz  Se1  Se2  Sp1  Sp2 Indv1 Indv2 Indv3 Indv4 Indv5 Indv6
@@ -90,32 +87,38 @@
 #
 # Value
 # -----
-# prevalence  : An estimate of p, a point estimate for MAP but MCMC sample for Bayesian.
-# accuracy    : An estimate of delta, a point estimate for MAP but MCMC sample for Bayesian.
+# prevalence  : An estimate of p, a point estimate for MAP but MCMC sample for Mean.
+# accuracy    : An estimate of delta, a point estimate for MAP but MCMC sample for Mean.
 # convergence : An indicator, either 0 or 1, where 0 indicates successful completion and 1 
-#               means the iteration reaches emmaxit. For Bayesian, convergence is always 0.
+#               indicates the iteration reaches emmaxit. For Mean, convergence is always 0.
 #
 #
-multDiseaseBayes <- function( p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),Z,
-                              Yt=matrix(0,N,2),N,S,N0=0,a0=0,b0=0,acr.info=matrix(0,2,4),
-                              postGit=6000,emGit=6000,emburn=1000,emmaxit=100,emtol=1e-03,
-                              method=c("MAP","Bayesian"),accuracy=c("unknown","known")){
+multDiseaseBayes <- function(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
+                      Z,Yt=matrix(0,N,2),N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
+                      Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),postGit=6000,
+                      emGit=6000,emburn=1000,emmaxit=200,emtol=1e-03,
+                      method=c("MAP","Mean"),accuracy=c("unknown","known")){
   method <- match.arg(method)
   accuracy <- match.arg(accuracy)
   if(method=="MAP"){
     if(accuracy=="known"){
-      res <- EmKnownAssayAcr(p0,Z,Yt,N,S,N0,a0,emGit,emburn,emmaxit,emtol)
+      res <- EmKnownAssayAcr(p0=p0,Z=Z,Yt=Yt,N=N,S=S,p.pr=p.pr,emGit=emGit,
+                             emburn=emburn,emmaxit=emmaxit,emtol=emtol)
     }
     if(accuracy=="unknown"){
-	  res <- EmUnknownAssayAcr(p0,delta0,Z,Yt,N,S,N0,a0,b0,acr.info,emGit,emburn,emmaxit,emtol)
+	  res <- EmUnknownAssayAcr(p0=p0,delta0=delta0,Z=Z,Yt=Yt,N=N,S=S,p.pr=p.pr,
+                               se1.pr=Se1.pr,se2.pr=Se2.pr,sp1.pr=Sp1.pr,sp2.pr=Sp2.pr,
+                               emGit=emGit,emburn=emburn,emmaxit=emmaxit,emtol=emtol)
 	}
   }
-  if(method=="Bayesian"){
+  if(method=="Mean"){
     if(accuracy=="known"){
-	  res <- PostKnownAssayAcr(p0,Z,Yt,N,S,N0,a0,postGit)
+	  res <- PostKnownAssayAcr(p0=p0,Z=Z,Yt=Yt,N=N,S=S,p.pr=p.pr,postGit=postGit)
 	}
 	if(accuracy=="unknown"){
-	  res <- PostUnknownAssayAcr(p0,delta0,Z,Yt,N,S,N0,a0,b0,acr.info,postGit)
+	  res <- PostUnknownAssayAcr(p0=p0,delta0=delta0,Z=Z,Yt=Yt,N=N,S=S,p.pr=p.pr,
+                                 se1.pr=Se1.pr,se2.pr=Se2.pr,sp1.pr=Sp1.pr,
+                                 sp2.pr=Sp2.pr,postGit=postGit)
 	}
   }
   return(res)
@@ -125,7 +128,8 @@ multDiseaseBayes <- function( p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),Z,
 ##################################################
 
 ## Specify the working directory
-setwd(dir = "C:\\programs")
+# setwd(dir = "C:\\programs")
+setwd("C:/Users/User/Desktop/GeneralMultilexPooling_102520--GitHub")
 
 ## Import source files
 source("SupportPrograms.txt")
@@ -146,13 +150,16 @@ design <- c(9,3,1)  # Three-stage hierarchical design
 
 set.seed(123)
 out <- hier.alg.data(p,N,design,Se,Sp)
-Z <- out$Data
-T <- out$T
-## MAP estimation with unknown accuracies and flat priors
+Z <- out$Data     # the pooling data generated
+T <- out$T        # the number of tests expended
+
+## MAP estimation with unknown accuracies and flat priors:
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
-                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),N0=0,a0=0,
-                  b0=0,acr.info=matrix(0,2,4),emGit=12000,emburn=2000,
-	          emmaxit=200,emtol=1e-03,method="MAP",accuracy="unknown")
+                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
+                  Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
+                  emGit=12000,emburn=2000,emmaxit=200,emtol=1e-03,
+                  method="MAP",accuracy="unknown")
+	  
 
 ## MAP Results (equivalent to MLE with these flat priors):
 # > res
@@ -170,38 +177,37 @@ set.seed(123)
 out <- hier.alg.data(p,N,design,Se,Sp)
 Z <- out$Data
 T <- out$T
-## Bayesian estimates with unknown accuracies and flat priors
+## Mean estimation with unknown accuracies and flat priors:
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
-                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),N0=0,a0=0,
-                  b0=0,acr.info=matrix(0,2,4),postGit=15000,
-                  method="Bayesian",accuracy="unknown")
+                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
+                  Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
+                  postGit=12000,method="Mean",accuracy="unknown")
 
-## Bayesian results:
-burn <- 5000   # burn-in period
-colMeans( res$prevalence[-(1:burn), ] )
-colMeans( res$accuracy[-(1:burn), ] )
-apply(res$prevalence[-(1:burn),],2,sd)
-apply(res$accuracy[-(1:burn),],2,sd)
+## Mean estimation results:
+burn <- 2000            # burn-in period
+pick <- seq(1,10000,5)  # thinning
 
-## Bayesian results:
+colMeans( res$prevalence[-(1:burn), ][pick, ] )
+colMeans( res$accuracy[-(1:burn), ][pick, ] )
 
-# > burn <- 2000   # burn-in period
+apply( res$prevalence[-(1:burn), ][pick, ], 2, sd  )
+apply( res$accuracy[-(1:burn), ][pick, ], 2, sd  )
 
-# > colMeans( res$prevalence[-(1:burn), ] )
+# > colMeans( res$prevalence[-(1:burn), ][pick, ] )
 #         p00         p10         p01         p11 
-# 0.951748090 0.019118464 0.019272705 0.009860741 
+# 0.951657890 0.019214570 0.019251822 0.009875718 
 
-# > colMeans( res$accuracy[-(1:burn), ] )
+# > colMeans( res$accuracy[-(1:burn), ][pick, ] )
 #       Se1       Se2       Sp1       Sp2 
-# 0.9362821 0.9494646 0.9943489 0.9916391 
+# 0.9362142 0.9491854 0.9944378 0.9915996 
 
-# > apply(res$prevalence[-(1:burn),],2,sd)
+# > apply( res$prevalence[-(1:burn), ][pick, ], 2, sd  )
 #         p00         p10         p01         p11 
-# 0.003296814 0.002168847 0.002141731 0.001408937 
+# 0.003304783 0.002241015 0.002123925 0.001405953 
 
-# > apply(res$accuracy[-(1:burn),],2,sd)
+# > apply( res$accuracy[-(1:burn), ][pick, ], 2, sd  )
 #         Se1         Se2         Sp1         Sp2 
-# 0.016875732 0.014248242 0.002942277 0.003309463 
+# 0.016963091 0.014256603 0.002898824 0.003337798
 
 
 ## Also try other designs and estimation settings
@@ -223,4 +229,3 @@ res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
                   S=length(design),N0=0,a0=0,postGit=15000,method="Bayesian",
                   accuracy="known")
-
