@@ -1,4 +1,4 @@
-# Multiplex-Group-Testing
+# GeneralMultiplexPooling
 
 This repository contains R programs of the article, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." An R function "multDiseaseBayes" is provided to fit the proposed Bayesian estimation method and maximum a posteriori (MAP) estimation method, which can accommodate ANY group testing data involving multiplex assays and provide cost-effective estimates for the prevalence of multiple diseases as well as the assay accuracies (sensitivity and specificity). 
 
@@ -14,7 +14,19 @@ Reference
 Warasi, M., McMahan, C., Tebbs, J., and Bilder, C. (2020+). Estimating the prevalence of two or more diseases using outcomes from multiplex group testing. Under review.
 
 
-################## Simulation examples ##################
+
+################## R function with simulation examples ##################
+
+## General-purpose estimation with multiplex assays. This function implements the EM algorithm (MAP estimation) and the posterior sampling algorithm from multiplex group testing data and works with two infections (i.e., K = 2) and one multiplex assay (i.e., L = 1). For more information, see the simulation setting in the article (Section 5).
+
+## Usage: 
+
+multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
+                      Z,Yt=matrix(0,N,2),N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
+                      Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),postGit=6000,
+                      emGit=6000,emburn=1000,emmaxit=200,emtol=1e-03,
+                      method=c("MAP","Mean"),accuracy=c("unknown","known"))
+
 
 ## Specify the working directory
 setwd(dir = "C:\\programs")
@@ -43,15 +55,16 @@ set.seed(123)
 
 out <- hier.alg.data(p,N,design,Se,Sp)
 
-Z <- out$Data
+Z <- out$Data   # Simulated pooling data
 
-T <- out$T
+T <- out$T      # The number of tests expended in the simulation
 
 ## MAP estimation with unknown accuracies and flat priors
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
-                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),N0=0,a0=0,
-                  b0=0,acr.info=matrix(0,2,4),emGit=12000,emburn=2000,
-	          emmaxit=200,emtol=1e-03,method="MAP",accuracy="unknown")
+                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
+                  Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
+                  emGit=12000,emburn=2000,emmaxit=200,emtol=1e-03,
+                  method="MAP",accuracy="unknown")
 
 ## MAP Results (equivalent to MLE with these flat priors):
 > res
@@ -75,75 +88,114 @@ out <- hier.alg.data(p,N,design,Se,Sp)
 
 Z <- out$Data
 
-T <- out$T
-
-## Bayesian estimates with unknown accuracies and flat priors
+## Mean estimation with unknown accuracies and flat priors:
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
-                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),N0=0,a0=0,
-                  b0=0,acr.info=matrix(0,2,4),postGit=15000,
-                  method="Bayesian",accuracy="unknown")
+                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
+                  Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
+                  postGit=12000,method="Mean",accuracy="unknown")
 
-## Bayesian results:
-burn <- 5000   # burn-in period
+## Mean estimation results:
+burn <- 2000            # burn-in period
 
-colMeans( res$prevalence[-(1:burn), ] )
+pick <- seq(1,10000,5)  # thinning
 
-colMeans( res$accuracy[-(1:burn), ] )
+colMeans( res$prevalence[-(1:burn), ][pick, ] )
 
-apply(res$prevalence[-(1:burn),],2,sd)
+colMeans( res$accuracy[-(1:burn), ][pick, ] )
 
-apply(res$accuracy[-(1:burn),],2,sd)
+apply( res$prevalence[-(1:burn), ][pick, ], 2, sd  )
 
-## Bayesian results:
+apply( res$accuracy[-(1:burn), ][pick, ], 2, sd  )
 
-> burn <- 2000   # burn-in period
 
-> colMeans( res$prevalence[-(1:burn), ] )
+> colMeans( res$prevalence[-(1:burn), ][pick, ] )
 
-     p00         p10         p01         p11 
-     
-0.951748090 0.019118464 0.019272705 0.009860741 
+         p00         p10         p01         p11 
+	 
+ 0.951657890 0.019214570 0.019251822 0.009875718 
 
-> colMeans( res$accuracy[-(1:burn), ] )
+
+> colMeans( res$accuracy[-(1:burn), ][pick, ] )
 
      Se1       Se2       Sp1       Sp2 
-     
-0.9362821 0.9494646 0.9943489 0.9916391 
+      
+0.9362142 0.9491854 0.9944378 0.9915996 
 
-> apply(res$prevalence[-(1:burn),],2,sd)
+
+> apply( res$prevalence[-(1:burn), ][pick, ], 2, sd  )
 
      p00         p10         p01         p11 
-     
-0.003296814 0.002168847 0.002141731 0.001408937 
 
-> apply(res$accuracy[-(1:burn),],2,sd)
+0.003304783 0.002241015 0.002123925 0.001405953 
+
+
+> apply( res$accuracy[-(1:burn), ][pick, ], 2, sd  )
 
      Se1         Se2         Sp1         Sp2 
-     
-0.016875732 0.014248242 0.002942277 0.003309463 
+
+0.016963091 0.014256603 0.002898824 0.003337798
 
 
-## Also try other designs and estimation settings
+## Try other hierarchical protocols:
 
 design <- c(5,1)        # Two-stage hierarchical
 
 design <- c(18,6,3,1)   # Four-stage hierarchical
 
-## For a two-dimensional array of dimensions 11x11, try
+
+## For a two-dimensional array of dimensions 11x11:
+set.seed(123)
+
 design <- c(11,11,1)    
 
 out <- array.2dim.data(p,N,design,Se,Sp)
 
 Z <- out$Data
 
-T <- out$T
+# # Array: MAP with known accuracies and flat Dirichlet:
+res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),
+                        N=N,S=length(design),p.pr=rep(1,4),
+                        emGit=12000,emburn=2000,emmaxit=200,emtol=1e-03,
+                        method="MAP",accuracy="known")
 
-## MAP with known accuracies and flat Dirichlet
-res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
-                  S=length(design),N0=0,a0=0,emGit=15000,emburn=5000,
-	          emmaxit=100,emtol=1e-03,method="MAP",accuracy="known")
+# MAP estimation results:
+> res
 
-## Bayesian with known accuracies and flat Dirichlet
-res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
-                  S=length(design),N0=0,a0=0,postGit=15000,method="Bayesian",
-                  accuracy="known")
+# $prevalence
+[1] 0.95495022 0.01767218 0.01816344 0.00921416
+
+# $accuracy
+NULL
+
+# $convergence
+[1] 0
+						
+
+## For a two-dimensional array of dimensions 11x11:
+set.seed(123)
+
+design <- c(11,11,1)    
+
+out <- array.2dim.data(p,N,design,Se,Sp)
+
+Z <- out$Data
+
+## Array: Mean with known accuracies and flat Dirichlet:
+res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
+                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
+                  postGit=12000,method="Mean",accuracy="known")
+
+## Mean estimation results:
+burn <- 2000            # burn-in period
+
+pick <- seq(1,10000,5)  # thinning
+
+> colMeans( res$prevalence[-(1:burn), ][pick, ] )
+     p00         p10         p01         p11 
+0.954443997 0.017813911 0.018389059 0.009353033 
+
+> apply( res$prevalence[-(1:burn), ][pick, ], 2, sd  )
+     p00         p10         p01         p11 
+0.002954447 0.001928380 0.001923174 0.001411674 
+
+
