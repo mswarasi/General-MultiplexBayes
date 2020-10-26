@@ -2,11 +2,17 @@
 
 This repository contains R programs of the article, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." An R function "multDiseaseBayes" is provided to fit the proposed Bayesian estimation method and maximum a posteriori (MAP) estimation method, which can accommodate ANY group testing data involving multiplex assays and provide cost-effective estimates for the prevalence of multiple diseases as well as the assay accuracies (sensitivity and specificity). 
 
-MainProgram.R - file that consists of the main R function combining the R subfunctions and FORTRAN subroutines. Documentation with illustrative (simulation) examples is also provided. 
+The files we have uploaded:
 
-SupportPrograms.txt - file that consists of standalone, executable R functions.
+1. MainProgram.R - R file consisting the main R function that implements the proposed estimation techniques. This combines the subfunctions written in R and FORTRAN. The documentation is also provided.
 
-Note: For efficient execution, compute-intensive parts of the program are written in FORTRAN 95 and called from R through three DLL files, gbbstwodisgen.dll, mapacrtwodgen.dll, and ytiltwodbayes.dll, which work in a 64-bit R package. 
+2. SupportPrograms.txt - This file consists of the supporting R programs.
+
+3. MultistageHierarchicalData.txt - This file provides an R function that simulates multiplex hierarchical group testing data with ANY number of hierarchical stages. This was used for the data simulation in Section 5 of the article. 
+
+4. TwoStageArrayData.txt - This file has an R function that simulates multiplex two-stage array testing data. This was used for the data simulation in Section 5 of the article
+
+5. gbbstwodisgen.dll, mapacrtwodgen.dll, ytiltwodbayes.dll - These DLL files have compiled FORTRAN subroutines for efficient execution of the Gibbs samplers used in the POSTERIOR SAMPLING ALGORITHM as well as in the MAP EM ALGORITHM. The DLL files will work with a 64-bit R package. 
 
 
 Reference
@@ -15,7 +21,7 @@ Warasi, M., McMahan, C., Tebbs, J., and Bilder, C. (2020+). Estimating the preva
 
 
 
-################## R function with simulation examples ##################
+###################### SIMULATION EXAMPLES ######################
 
 ## Usage
 
@@ -26,7 +32,7 @@ multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                       method=c("MAP","Mean"),accuracy=c("unknown","known"))
 
 
-## Specify the working directory
+## Download and save the files in a folder, and specify the directory:
 setwd(dir = "C:\\programs")
 
 ## Import source files
@@ -36,9 +42,8 @@ source("MultistageHierarchicalData.txt")
 
 source("TwoStageArrayData.txt")
 
-## Examles from Section 5 of the article with one assay, L = 1, are as follows.
 
-## Simulation configuration I:
+## Simulation configuration I with one assay (L=1):
 N <- 5000
 
 p <- c(.95,.02,.02,.01)
