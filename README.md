@@ -2,7 +2,7 @@
 
 This repository contains R programs of the article, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." An R function "multDiseaseBayes" is provided to fit the proposed Bayesian estimation method and maximum a posteriori (MAP) estimation method, which can accommodate ANY group testing data involving multiplex assays and provide cost-effective estimates for the prevalence of multiple diseases as well as the assay accuracies (sensitivity and specificity). 
 
-The files we have uploaded:
+Files uploaded:
 
 1. MainProgram.R - R file consisting the main R function that implements the proposed estimation techniques. This combines the subfunctions written in R and FORTRAN. The documentation is also provided.
 
