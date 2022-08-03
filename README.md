@@ -17,8 +17,7 @@ Files uploaded:
 
 Reference
 
-Warasi, M., McMahan, C., Tebbs, J., and Bilder, C. (2021+). Estimating the prevalence of two or more diseases using outcomes from multiplex group testing. Under review.
-
+Warasi, M., McMahan, C., Tebbs, J., and Bilder, C. (2022+). Estimating the prevalence of two or more diseases using outcomes from multiplex group testing. Under review.
 
 
 ###################### SIMULATION EXAMPLES ######################
