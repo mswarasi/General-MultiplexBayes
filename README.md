@@ -65,7 +65,7 @@ Z <- out$Data   # Simulated pooling data
 T <- out$T      # The number of tests expended in the simulation
 
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
-                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
+                  Z=Z,N=N,S=length(design),p.pr=rep(1,4),
                   Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
                   emGit=12000,emburn=2000,emmaxit=200,emtol=1e-03,
                   method="MAP",accuracy="unknown")
@@ -94,7 +94,7 @@ out <- hier.alg.data(p,N,design,Se,Sp)
 Z <- out$Data   # Simulated pooling data
 
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
-                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
+                  Z=Z,N=N,S=length(design),p.pr=rep(1,4),
                   Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
                   postGit=12000,method="Mean",accuracy="unknown")
 
@@ -154,7 +154,7 @@ out <- array.2dim.data(p,N,design,Se,Sp)
 
 Z <- out$Data
 
-res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),
+res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,
                         N=N,S=length(design),p.pr=rep(1,4),
                         emGit=12000,emburn=2000,emmaxit=200,emtol=1e-03,
                         method="MAP",accuracy="known")
@@ -180,7 +180,7 @@ out <- array.2dim.data(p,N,design,Se,Sp)
 Z <- out$Data
 
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
-                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
+                  Z=Z,N=N,S=length(design),p.pr=rep(1,4),
                   postGit=12000,method="Mean",accuracy="known")
 
 burn <- 2000            # burn-in period
