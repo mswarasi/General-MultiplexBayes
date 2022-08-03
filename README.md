@@ -26,7 +26,7 @@ Warasi, M., McMahan, C., Tebbs, J., and Bilder, C. (2021+). Estimating the preva
 ## Usage
 
 multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
-                      Z,Yt=matrix(0,N,2),N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
+                      Z,N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
                       Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),postGit=6000,
                       emGit=6000,emburn=1000,emmaxit=200,emtol=1e-03,
                       method=c("MAP","Mean"),accuracy=c("unknown","known"))
@@ -74,11 +74,11 @@ res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
 
 # $prevalence
 
-[1] 0.95234086 0.01895446 0.01899814 0.00970654
+[1] 0.95235454 0.01894246 0.01900132 0.00970168
 
 # $accuracy
 
-[1] 0.9379753 0.9526409 0.9955003 0.9923724
+[1] 0.9382384 0.9527329 0.9954653 0.9923734
 
 # $convergence
 
@@ -86,8 +86,6 @@ res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
 
 
 ## Example 2: Hierarchical Protocol. MAP with unknown accuracies and flat priors:
-
-set.seed(123)
 
 design <- c(9,3,1)  # Three-stage hierarchical design
 
@@ -150,8 +148,6 @@ design <- c(18,6,3,1)   # Four-stage hierarchical
 
 ## Example 3: Array Protocol. MAP with known accuracies and flat Dirichlet:
 
-set.seed(123)
-
 design <- c(11,11,1)    
 
 out <- array.2dim.data(p,N,design,Se,Sp)
@@ -176,8 +172,6 @@ NULL
 						
 
 ## Example 4: Array Protocol. Mean with known accuracies and flat Dirichlet:
-
-set.seed(123)
 
 design <- c(11,11,1)    
 
