@@ -1,3 +1,4 @@
+
 #************************************************************************#
 # Description
 # -----------
@@ -12,7 +13,7 @@
 # Usage
 # -----
 # multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),Z,
-#                  Yt=matrix(0,N,2),N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
+#                  N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
 #                  Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),postGit=6000,
 #                  emGit=6000,emburn=1000,emmaxit=200,emtol=1e-03,
 #                  method=c("MAP","Mean"),accuracy=c("unknown","known"))
@@ -24,7 +25,6 @@
 # delta0   : The initial value of delta, an estimate from the assay product 
 #            literature. This is used only when the assay accuracies are unknown.
 # Z        : A matrix of the observed group testing data, Z. See the details.
-# Yt       : A N by 2 matrix of the individual true binary statuses.
 # N        : The number of individuals tested (i.e., sample size).
 # S        : The maximum number of times an individual may be tested in pools or individually. 
 #            For example, S for a hierarchical algorithm is the number of hierarchical stages 
@@ -94,10 +94,14 @@
 #
 #
 multDiseaseBayes <- function(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
-                      Z,Yt=matrix(0,N,2),N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
+                      Z,N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
                       Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),postGit=6000,
                       emGit=6000,emburn=1000,emmaxit=200,emtol=1e-03,
                       method=c("MAP","Mean"),accuracy=c("unknown","known")){
+
+  Ymul <- rmultinom(N,1,p0)
+  Yt <- cbind(Ymul[2, ] + Ymul[4, ], Ymul[3, ] + Ymul[4, ])
+
   method <- match.arg(method)
   accuracy <- match.arg(accuracy)
   if(method=="MAP"){
@@ -128,8 +132,7 @@ multDiseaseBayes <- function(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
 ##################################################
 
 ## Specify the working directory
-# setwd(dir = "C:\\programs")
-setwd("C:/Users/User/Desktop/GeneralMultilexPooling_102520--GitHub")
+setwd(dir = "C:\\programs")
 
 ## Import source files
 source("SupportPrograms.txt")
@@ -155,20 +158,19 @@ T <- out$T        # the number of tests expended
 
 ## MAP estimation with unknown accuracies and flat priors:
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
-                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
+                  Z=Z,N=N,S=length(design),p.pr=rep(1,4),
                   Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
                   emGit=12000,emburn=2000,emmaxit=200,emtol=1e-03,
                   method="MAP",accuracy="unknown")
-	  
+
 
 ## MAP Results (equivalent to MLE with these flat priors):
-# > res
 # $prevalence
-# [1] 0.95234086 0.01895446 0.01899814 0.00970654
-
+# [1] 0.95235454 0.01894246 0.01900132 0.00970168
+# 
 # $accuracy
-# [1] 0.9379753 0.9526409 0.9955003 0.9923724
-
+# [1] 0.9382384 0.9527329 0.9954653 0.9923734
+# 
 # $convergence
 # [1] 0
 
@@ -179,7 +181,7 @@ Z <- out$Data
 T <- out$T
 ## Mean estimation with unknown accuracies and flat priors:
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
-                  Z=Z,Yt=matrix(0,N,2),N=N,S=length(design),p.pr=rep(1,4),
+                  Z=Z,N=N,S=length(design),p.pr=rep(1,4),
                   Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
                   postGit=12000,method="Mean",accuracy="unknown")
 
@@ -195,19 +197,20 @@ apply( res$accuracy[-(1:burn), ][pick, ], 2, sd  )
 
 # > colMeans( res$prevalence[-(1:burn), ][pick, ] )
 #         p00         p10         p01         p11 
-# 0.951657890 0.019214570 0.019251822 0.009875718 
-
+# 0.951827371 0.019071900 0.019258067 0.009842662 
+# 
 # > colMeans( res$accuracy[-(1:burn), ][pick, ] )
 #       Se1       Se2       Sp1       Sp2 
-# 0.9362142 0.9491854 0.9944378 0.9915996 
-
+# 0.9364981 0.9499843 0.9943262 0.9913911 
+#  
 # > apply( res$prevalence[-(1:burn), ][pick, ], 2, sd  )
 #         p00         p10         p01         p11 
-# 0.003304783 0.002241015 0.002123925 0.001405953 
-
+# 0.003407034 0.002240634 0.002156159 0.001399323 
+# 
 # > apply( res$accuracy[-(1:burn), ][pick, ], 2, sd  )
 #         Se1         Se2         Sp1         Sp2 
-# 0.016963091 0.014256603 0.002898824 0.003337798
+# 0.016860747 0.014035431 0.003007249 0.003302961 
+
 
 
 ## Also try other designs and estimation settings
@@ -221,13 +224,11 @@ Z <- out$Data
 T <- out$T
 
 ## MAP with known accuracies and flat Dirichlet
-res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
+res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,N=N,
                   S=length(design),N0=0,a0=0,emGit=15000,emburn=5000,
-	          emmaxit=100,emtol=1e-03,method="MAP",accuracy="known")
+	              emmaxit=100,emtol=1e-03,method="MAP",accuracy="known")
 
 ## Bayesian with known accuracies and flat Dirichlet
-res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,Yt=matrix(0,N,2),N=N,
-                  S=length(design),N0=0,a0=0,postGit=15000,method="Bayesian",
-                  accuracy="known")
-
+res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,N=N,S=length(design),
+                  N0=0,a0=0,postGit=15000,method="Bayesian",accuracy="known")
 
