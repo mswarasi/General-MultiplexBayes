@@ -1,6 +1,6 @@
 # Gen-MultiplexBayes
 
-This repository contains R programs of the article, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." An R function "multDiseaseBayes" is provided to fit the proposed Bayesian estimation method and maximum a posteriori (MAP) estimation method, which can accommodate ANY group testing data involving multiplex assays and provide cost-effective estimates for the prevalence of multiple diseases as well as the assay accuracies (sensitivity and specificity). 
+This repository contains R programs of the article, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." An R function "multDiseaseBayes" is provided for the posterior sampling algorithm (Bayes) and the EM algorithm (MAP) in Warasi et al. (2022+) using multivariate group testing data using ANY pooling protocols with K=2 diseases and L=1 multiplex assay. The function can provide posterior samples (Bayes) for the coinfection probabilities in p=(p00,p10,p01,p11) and the assay accuracy probabilities (sensitivity and specificity). The function can also provide the maximum a posteriori probability (MAP) estimates for the parameters.
 
 Files uploaded:
 
@@ -28,7 +28,7 @@ multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                       Z,N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
                       Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),postGit=6000,
                       emGit=6000,emburn=1000,emmaxit=200,emtol=1e-03,
-                      method=c("MAP","Mean"),accuracy=c("unknown","known"))
+                      method=c("MAP","Bayes"),accuracy=c("unknown","known"))
 
 
 ## Download and save the files in a folder, and specify the directory:
@@ -95,7 +95,7 @@ Z <- out$Data   # Simulated pooling data
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                   Z=Z,N=N,S=length(design),p.pr=rep(1,4),
                   Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
-                  postGit=12000,method="Mean",accuracy="unknown")
+                  postGit=12000,method="Bayes",accuracy="unknown")
 
 burn <- 2000            # burn-in period
 
@@ -170,7 +170,7 @@ NULL
 [1] 0
 						
 
-## Example 4: Array Protocol. Mean with known accuracies and flat Dirichlet:
+## Example 4: Array Protocol. Bayes with known accuracies and flat Dirichlet:
 
 design <- c(11,11,1)    
 
@@ -180,7 +180,7 @@ Z <- out$Data
 
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                   Z=Z,N=N,S=length(design),p.pr=rep(1,4),
-                  postGit=12000,method="Mean",accuracy="known")
+                  postGit=12000,method="Bayes",accuracy="known")
 
 burn <- 2000            # burn-in period
 
