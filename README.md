@@ -27,8 +27,8 @@ Warasi, M., Tebbs, J., McMahan, C., and Bilder, C. (2022+). Estimating the preva
 
 multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                       Z,N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
-                      Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),postGit=6000,
-                      emGit=6000,emburn=1000,emmaxit=200,emtol=1e-03,
+                      Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),postGit=12000,
+                      emGit=12000,emburn=2000,emmaxit=200,emtol=1e-03,
                       method=c("MAP","Bayes"),accuracy=c("unknown","known"))
 
 
@@ -201,3 +201,4 @@ pick <- seq(1,10000,5)  # thinning
 0.002954447 0.001928380 0.001923174 0.001411674 
 
 
+## Note: More examples are provided in function: MainProgram.R
