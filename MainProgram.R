@@ -178,7 +178,7 @@ set.seed(123)
 out <- hier.alg.data(p,N,design,Se,Sp)
 Z <- out$Data
 T <- out$T
-## Mean estimation with unknown accuracies and flat priors:
+## Bayes estimation with unknown accuracies and flat priors:
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                   Z=Z,N=N,S=length(design),p.pr=rep(1,4),
                   Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
@@ -225,9 +225,9 @@ T <- out$T
 ## MAP with known accuracies and flat Dirichlet
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,N=N,
                   S=length(design),N0=0,a0=0,emGit=15000,emburn=5000,
-	              emmaxit=100,emtol=1e-03,method="MAP",accuracy="known")
+	          emmaxit=100,emtol=1e-03,method="MAP",accuracy="known")
 
-## Bayesian with known accuracies and flat Dirichlet
+## Bayes with known accuracies and flat Dirichlet
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,N=N,S=length(design),
                   N0=0,a0=0,postGit=15000,method="Bayes",accuracy="known")
 
