@@ -211,23 +211,23 @@ apply( res$accuracy[-(1:burn), ][pick, ], 2, sd  )
 # 0.016860747 0.014035431 0.003007249 0.003302961 
 
 
-
 ## Also try other designs and estimation settings
 # design <- c(5,1)        # Two-stage hierarchical
 # design <- c(18,6,3,1)   # Four-stage hierarchical
 
 ## For a two-dimensional array of dimensions 11x11, try
-design <- c(11,11,1)    
+design <- c(11,11,1)  # Pool sizes for rows, cols, & individual   
 out <- array.2dim.data(p,N,design,Se,Sp)
 Z <- out$Data
 T <- out$T
 
 ## MAP with known accuracies and flat Dirichlet
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,N=N,
-                  S=length(design),N0=0,a0=0,emGit=15000,emburn=5000,
-	          emmaxit=100,emtol=1e-03,method="MAP",accuracy="known")
+                  S=length(design),emGit=12000,emburn=2000,
+	          emmaxit=100,emtol=1e-03,method="MAP",accuracy="unknown")
 
 ## Bayes with known accuracies and flat Dirichlet
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,N=N,S=length(design),
-                  N0=0,a0=0,postGit=15000,method="Bayes",accuracy="known")
+                  postGit=12000,method="Bayes",accuracy="unknown")
+
 
