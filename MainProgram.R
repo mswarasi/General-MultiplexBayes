@@ -2,12 +2,11 @@
 #************************************************************************#
 # Description
 # -----------
-# General-purpose estimation with multiplex assays. This function implements 
-# the EM algorithm (MAP estimation) and the posterior sampling algorithm in 
-# the article, "Estimating the prevalence of two or more diseases using outcomes 
-# from multiplex group testing," by Warasi et al. (2020+). The function works 
-# with two infections (i.e., K = 2) and one multiplex assay (i.e., L = 1). 
-# See the simulation setting in the article (Section 5).
+# General-purpose estimation with multiplex assays. This function implements the 
+# EM algorithm (MAP estimation) and the posterior sampling algorithm in the article,
+# "Estimating the prevalence of two or more diseases using outcomes from multiplex 
+# group testing." The function works with two infections (i.e., K = 2) and one multiplex
+# assay (i.e., L = 1). See the simulation setting in the article (Section 5).
 #
 #
 # Usage
@@ -16,30 +15,30 @@
 #                  N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
 #                  Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),postGit=6000,
 #                  emGit=6000,emburn=1000,emmaxit=200,emtol=1e-03,
-#                  method=c("MAP","Mean"),accuracy=c("unknown","known"))
+#                  method=c("MAP","Bayes"),accuracy=c("unknown","known"))
 #
 #
 # Arguments
 # ---------
-# p0       : The initial value of p=(p00,p10,p01,p11), an estimate from historical data.  
-# delta0   : The initial value of delta, an estimate from the assay product 
+# p0       : Initial value of p=(p00,p10,p01,p11), an estimate from historical data.  
+# delta0   : Initial value of delta, an estimate from the assay product 
 #            literature. This is used only when the assay accuracies are unknown.
 # Z        : A matrix of the observed group testing data, Z. See the details.
-# N        : The number of individuals tested (i.e., sample size).
-# S        : The maximum number of times an individual may be tested in pools or individually. 
+# N        : Number of individuals tested (i.e., sample size).
+# S        : Maximum number of times an individual may be tested in pools or individually. 
 #            For example, S for a hierarchical algorithm is the number of hierarchical stages 
 #            and S is 3 for a two-dimensional array algorithm. 
-# p.pr     : Dirichlet prior for p.
-# Se1.pr   : Beta prior for Se1.
-# Se2.pr   : Beta prior for Se2.
-# Sp1.pr   : Beta prior for Sp1.
-# Sp2.pr   : Beta prior for Sp2.
-# postGit  : The number of Gibbs samples to be drawn from the posterior dist.
-# emGit    : The number of Gibbs samples to be used in the EM algorithm.
-# emburn   : The initial Gibbs samples to be discarded in the EM algorithm.
-# emmaxit  : The maximum number of iterations the EM algorithm can run.
-# emtol    : The convergence tolerance used in the EM algorithm.
-# method   : The estimation method to be used, either "MAP" or "Mean". Defaults to "MAP".
+# p.pr     : A vector of 4x1 Dirichlet hyperparameters for p.
+# Se1.pr   : A vector of 2x1 beta hyperparameters for Se1.
+# Se2.pr   : A vector of 2x1 beta hyperparameters for Se2.
+# Sp1.pr   : A vector of 2x1 beta hyperparameters for Sp1.
+# Sp2.pr   : A vector of 2x1 beta hyperparameters for Sp2.
+# postGit  : Number of Gibbs samples to be drawn from the posterior dist.
+# emGit    : Number of Gibbs samples to be used in the EM algorithm.
+# emburn   : Nnitial Gibbs samples to be discarded in the EM algorithm.
+# emmaxit  : Maximum number of iterations the EM algorithm can run.
+# emtol    : Convergence tolerance used in the EM algorithm.
+# method   : Estimation method to be used, either "MAP" or "Bayes". Defaults to "MAP".
 # accuracy : Whether the assay accuracies are known or unknown. Defaults to "unknown".
 #
 #
@@ -87,17 +86,17 @@
 #
 # Value
 # -----
-# prevalence  : An estimate of p, a point estimate for MAP but MCMC sample for Mean.
-# accuracy    : An estimate of delta, a point estimate for MAP but MCMC sample for Mean.
+# prevalence  : An estimate of p, a point estimate for MAP but MCMC sample for Bayes.
+# accuracy    : An estimate of delta, a point estimate for MAP but MCMC sample for Bayes.
 # convergence : An indicator, either 0 or 1, where 0 indicates successful completion and 1 
-#               indicates the iteration reaches emmaxit. For Mean, convergence is always 0.
+#               indicates the iteration reaches emmaxit. For Bayes, convergence is always 0.
 #
 #
 multDiseaseBayes <- function(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                       Z,N,S,p.pr=rep(1,4),Se1.pr=c(1,1),
                       Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),postGit=6000,
                       emGit=6000,emburn=1000,emmaxit=200,emtol=1e-03,
-                      method=c("MAP","Mean"),accuracy=c("unknown","known")){
+                      method=c("MAP","Bayes"),accuracy=c("unknown","known")){
 
   Ymul <- rmultinom(N,1,p0)
   Yt <- cbind(Ymul[2, ] + Ymul[4, ], Ymul[3, ] + Ymul[4, ])
@@ -115,7 +114,7 @@ multDiseaseBayes <- function(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                                emGit=emGit,emburn=emburn,emmaxit=emmaxit,emtol=emtol)
 	}
   }
-  if(method=="Mean"){
+  if(method=="Bayes"){
     if(accuracy=="known"){
 	  res <- PostKnownAssayAcr(p0=p0,Z=Z,Yt=Yt,N=N,S=S,p.pr=p.pr,postGit=postGit)
 	}
@@ -183,7 +182,7 @@ T <- out$T
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),delta0=c(.95,.95,.98,.98),
                   Z=Z,N=N,S=length(design),p.pr=rep(1,4),
                   Se1.pr=c(1,1),Se2.pr=c(1,1),Sp1.pr=c(1,1),Sp2.pr=c(1,1),
-                  postGit=12000,method="Mean",accuracy="unknown")
+                  postGit=12000,method="Bayes",accuracy="unknown")
 
 ## Mean estimation results:
 burn <- 2000            # burn-in period
@@ -230,5 +229,5 @@ res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,N=N,
 
 ## Bayesian with known accuracies and flat Dirichlet
 res <- multDiseaseBayes(p0=c(.90,.06,.03,.01),Z=Z,N=N,S=length(design),
-                  N0=0,a0=0,postGit=15000,method="Bayesian",accuracy="known")
+                  N0=0,a0=0,postGit=15000,method="Bayes",accuracy="known")
 
