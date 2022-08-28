@@ -201,4 +201,3 @@ pick <- seq(1,10000,5)  # thinning
 0.002954447 0.001928380 0.001923174 0.001411674 
 
 
-## Note: More examples are provided in function: MainProgram.R
