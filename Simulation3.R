@@ -21,8 +21,6 @@
 # Last updated on 08/28/2022.
 ##################################################
 
-rm(list=ls())
-
 ## Set the working directory:
 setwd(dir = "C:\\programs")
 
@@ -102,8 +100,8 @@ delta <- c(rep(.95,2),rep(.98,2),rep(.98,2),rep(.99,2))
 p.pr <- rep(1,4)
 
 # Either flat or informative priors on Se & Sp:
-SeSp.pr <- "flat" 
-#SeSp.pr <- "informative" 
+# SeSp.pr <- "flat" 
+SeSp.pr <- "informative" 
 
 if( SeSp.pr == "flat" ){
   se.pr <- matrix(1,2,4)
