@@ -1,11 +1,16 @@
 # General-MultiplexBayes
 
-This repository contains R programs of the article, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." An R function "multDiseaseBayes" is provided that can be used to implement the posterior sampling algorithm and the EM algorithm proposed in Warasi et al. (2022+) using group testing data with K=2 diseases and L=1 multiplex assay. The function can provide posterior samples (Bayes) for the coinfection probabilities in p=(p00,p10,p01,p11) as well as the assay accuracy probabilities (sensitivity and specificity). The function also can provide the maximum a posteriori probability (MAP) estimates of the parameters.
-
+This repository contains R programs of the article, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." Two R functions are provided to implement the posterior sampling algorithm and the EM algorithm proposed in Warasi et al. (2022+). This article uses multiplex group testing data for estimating the coinfection probabilities and the assay accuracy probabilities (sensitivity and specificity). 
 
 Files uploaded:
 
-1. MainProgram.R - R file consisting the main R function that implements the proposed estimation techniques. This combines the subfunctions written in R and FORTRAN. The documentation is also provided.
+
+
+
+
+
+1. 
+MainProgram.R - R file consisting the main R function that implements the proposed estimation techniques. This combines the subfunctions written in R and FORTRAN. The documentation is also provided.
 
 2. SupportPrograms.txt - This file consists of the supporting R programs.
 
