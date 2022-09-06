@@ -4,11 +4,11 @@ This repository contains R programs of the article, "Estimating the prevalence o
 
 R code of the simulation examples in the article is split into three files:
 
-1. Simulation1.R - R code to produce the estimation results shown in Table D.1 (in Web Appendix D).
+1. Simulation1.R -- to reproduce the estimation results shown in Table D.1 (in Web Appendix D).
 
-2. Simulation2.R - R code to produce the estimation results shown in Tables 2-3 (in the article).
+2. Simulation2.R -- to reproduce the estimation results shown in Tables 2-3 (in the article).
 
-3. Simulation3.R - R code to produce the estimation results shown in Tables D.3-D.8 (in Web Appendix D). 
+3. Simulation3.R -- to reproduce the estimation results shown in Tables D.3-D.8 (in Web Appendix D). 
 
 
 
