@@ -1,0 +1,20 @@
+
+
+mult.gt.bayes_L2 <- function(p0=c(.90,.06,.03,.01),delta0=c(rep(.95,2),rep(.98,6)),Z,
+                             N,S,p.pr=rep(1,4),se.pr=matrix(1,2,4),sp.pr=matrix(1,2,4),
+                             postGit=6000,emGit=6000,emburn=1000,emmaxit=100,emtol=1e-03,
+                             method=c("MAP","Bayes")){
+
+  Ymul <- rmultinom(N,1,p0)
+  Yt <- cbind(Ymul[2, ] + Ymul[4, ], Ymul[3, ] + Ymul[4, ])
+
+  method <- match.arg(method)
+  if(method=="MAP"){
+    res <- EmUnknownAssayAcr_L2(p0,delta0,Z,Yt,N,S,p.pr,se.pr,sp.pr,emGit,emburn,emmaxit,emtol)
+  }
+  if(method=="Bayes"){
+    res <- PostUnknownAssayAcr_L2(p0,delta0,Z,Yt,N,S,p.pr,se.pr,sp.pr,postGit)
+  }
+  return(res)
+}
+
