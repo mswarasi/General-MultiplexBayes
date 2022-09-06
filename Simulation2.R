@@ -23,7 +23,7 @@
 setwd(dir = "C:\\programs")
 
 ## Importing necessary functions:
-source("MainFunctions.txt")
+source("MainFunction.txt")
 source("SupportPrograms.txt")
 source("MultStageHierData.txt")
 source("TwoStageArrayData.txt")
