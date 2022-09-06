@@ -27,7 +27,7 @@ rm(list=ls())
 setwd(dir = "C:\\programs")
 
 ## Importing necessary functions:
-source("MainFunctions_L2.txt")
+source("MainFunction_L2.txt")
 source("SupportPrograms_L2.txt")
 source("MultStageHierData_L2.txt")
 source("TwoStageArrayData_L2.txt")
