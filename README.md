@@ -24,10 +24,10 @@ We illustrate the R functions using simulated data. The data are generated using
 
 ##################################################
 
-## Set the working directory:
+### Set the working directory:
 setwd(dir = "C:\\programs")
 
-## Importing necessary functions:
+### Importing necessary functions:
 source("MainFunction.txt")
 
 source("SupportPrograms.txt")
@@ -36,15 +36,13 @@ source("MultStageHierData.txt")
 
 source("TwoStageArrayData.txt")
 
-## Package MCMCpack is required:
+### Package MCMCpack is required:
 
 install.packages("MCMCpack")
 
 ##################################################
 
-### Data simulation using function: hier.alg.data()
-
-### Parameter configurations for data simulation:
+### The data are simulated using function: hier.alg.data(). Parameter configurations for data simulation:
 N <- 5000                       # Sample size
 
 H3 <- c(9, 3, 1)                # H3 protocol
@@ -94,7 +92,7 @@ burn <- 2000             # a burn-in period of 2000
 
 pick <- seq(1,10000,5)   # keeping every 5th
 
-## Choose an initial value. One can start at the true value, the default value p0=c(.90,.06,.03,.01), delta0=c(.95,.95,.98,.98), or any reasonable choice: 
+### Choose an initial value. One can start at the true value, the default value p0=c(.90,.06,.03,.01), delta0=c(.95,.95,.98,.98), or any reasonable choice: 
 
 p0 <- c(.90,.06,.03,.01)    
 
@@ -106,7 +104,7 @@ res1 <- mult.gt.bayes(p0=p0,delta0=delta0,
            Se1.pr=Se1.pr,Se2.pr=Se2.pr,Sp1.pr=Sp1.pr,Sp2.pr=Sp2.pr,
            postGit=G,method="Bayes",accuracy="unknown")
 
-## Mean estimation results are shown below. This computing is completed in 21 seconds on a computer that has an Intel 2.60 GHz processor and 32 GB of RAM.
+### Mean estimation results are shown below. This computing is completed in 21 seconds on a computer that has an Intel 2.60 GHz processor and 32 GB of RAM.
 
 p.Mean <- colMeans(res1$prevalence[-(1:burn),][pick,])
 
@@ -139,7 +137,7 @@ res2 <- mult.gt.bayes(p0=p0,delta0=delta0,
             Se1.pr=Se1.pr,Se2.pr=Se2.pr,Sp1.pr=Sp1.pr,Sp2.pr=Sp2.pr,
             emGit=G,emburn=burn,method="MAP",accuracy="unknown")
 
-## MAP estimation results are shown below. This computing is completed in 51 seconds that has an Intel 2.60 GHz processor and 32 GB of RAM.
+### MAP estimation results are shown below. This computing is completed in 51 seconds that has an Intel 2.60 GHz processor and 32 GB of RAM.
 
 p.MAP <- res2$prevalence
 
