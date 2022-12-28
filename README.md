@@ -14,12 +14,12 @@ R code of the simulation examples in the article is split into three files:
 
 Reference
 
-Warasi, M., Tebbs, J., McMahan, C., and Bilder, C. (2022+). Estimating the prevalence of two or more diseases using outcomes from multiplex group testing. Under review.
+Warasi, M., Tebbs, J., McMahan, C., and Bilder, C. (2023+). Estimating the prevalence of two or more diseases using outcomes from multiplex group testing. Under review.
 
 
 ##################################################
 
-We herein show how the estimation techniques in Warasi et al. (2022+) can be implemented using the R functions provided in this repository. 
+We herein show how the estimation techniques in Warasi et al. (2023+) can be implemented using the R functions provided in this repository. 
 We illustrate the R functions using simulated data. The data are generated using the parameter configuration described in Section 5 (Tables 1-3).
 
 ##################################################
@@ -106,7 +106,7 @@ res1 <- mult.gt.bayes(p0=p0,delta0=delta0,
            Se1.pr=Se1.pr,Se2.pr=Se2.pr,Sp1.pr=Sp1.pr,Sp2.pr=Sp2.pr,
            postGit=G,method="Bayes",accuracy="unknown")
 
-## Mean estimation results are shown below. This computing is completed in 21 seconds.
+## Mean estimation results are shown below. This computing is completed in 21 seconds on a computer that has an Intel 2.60 GHz processor and 32 GB of RAM.
 
 p.Mean <- colMeans(res1$prevalence[-(1:burn),][pick,])
 
@@ -139,7 +139,7 @@ res2 <- mult.gt.bayes(p0=p0,delta0=delta0,
             Se1.pr=Se1.pr,Se2.pr=Se2.pr,Sp1.pr=Sp1.pr,Sp2.pr=Sp2.pr,
             emGit=G,emburn=burn,method="MAP",accuracy="unknown")
 
-## MAP estimation results are shown below. This computing is completed in 51 seconds.
+## MAP estimation results are shown below. This computing is completed in 51 seconds that has an Intel 2.60 GHz processor and 32 GB of RAM.
 
 p.MAP <- res2$prevalence
 
