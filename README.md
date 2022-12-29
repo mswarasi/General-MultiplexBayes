@@ -4,12 +4,15 @@ This repository contains R programs of the article, "Estimating the prevalence o
 
 R code of the simulation examples in the article is split into three files:
 
-1. Simulation1.R -- to reproduce the estimation results shown in Table D.1 (in Web Appendix D).
+1. Simulation1.txt -- to reproduce the estimation results shown in Tables 2-3 (in the article).
 
-2. Simulation2.R -- to reproduce the estimation results shown in Tables 2-3 (in the article).
+2. Simulation2.txt -- to reproduce the estimation results shown in Table D.1 (in Web Appendix D).
 
-3. Simulation3.R -- to reproduce the estimation results shown in Tables D.3-D.8 (in Web Appendix D). 
+3. Simulation3.txt -- to reproduce the estimation results shown in Tables D.3-D.8 (in Web Appendix D). 
 
+4. Simulation4.txt -- to reproduce the estimation results shown in Table D.9 (in Web Appendix D). 
+
+5. Simulation5.txt -- to reproduce the estimation results shown in Tables D.10-D.11 (in Web Appendix D). 
 
 
 Reference
@@ -92,6 +95,12 @@ burn <- 2000             # a burn-in period of 2000
 
 pick <- seq(1,10000,5)   # keeping every 5th
 
+### Choose the convergence tolerance, epsilon, in the EM algorithm. We have used epsilon = 0.001 for all results in the article. 
+epsilon <- 0.001
+
+### Specify the maximum number of iterations, emmaxit, in the EM algorithm. We use emmaxit = 200 throughout the article. Note that the EM algorithm usually converges fast and never reaches the max limit.
+emmaxit <- 200
+
 ### Choose an initial value. One can start at the true value, the default value p0=c(.90,.06,.03,.01), delta0=c(.95,.95,.98,.98), or any reasonable choice: 
 
 p0 <- c(.90,.06,.03,.01)    
@@ -135,7 +144,8 @@ delta.SE <- apply(res1$accuracy[-(1:burn),][pick,],2,sd)
 res2 <- mult.gt.bayes(p0=p0,delta0=delta0,
             Z=Z,N=N,S=length(protocol),p.pr=p.pr,
             Se1.pr=Se1.pr,Se2.pr=Se2.pr,Sp1.pr=Sp1.pr,Sp2.pr=Sp2.pr,
-            emGit=G,emburn=burn,method="MAP",accuracy="unknown")
+            emGit=G,emburn=burn,emmaxit=emmaxit,emtol=epsilon,
+            method="MAP",accuracy="unknown")
 
 ### MAP estimation results are shown below. This computing is completed in 51 seconds that has an Intel 2.60 GHz processor and 32 GB of RAM.
 
