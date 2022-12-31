@@ -70,9 +70,11 @@ T <- out$T           # The number of tests expended
 
 The simulated data are in the matrix object Z. The data with other information need to be structured in a specific manner. The first two columns consist of test responses for diseases 1 & 2, the third column consists of pool sizes, columns 4-5 must have the assay sensitivities for diseases 1 & 2, columns 6-7 consist of specificities for diseases 1 & 2, and column 8 onward must have identification numbers of the individuals assigned to each pool. The pool identification numbers (i.e., row names) are not used so they do not need to be specified. Parts of a simulated data set are shown in "MainFunction.txt" in this repository. For more information, please refer to the simulation examples provided in Simulation1.txt - Simulation5.txt.
 
-head( Z )
 
-tail( Z )
+head(Z)
+
+
+tail(Z)
 
 
 ##################################################
