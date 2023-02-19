@@ -1,18 +1,17 @@
 # General-MultiplexBayes
 
-This repository contains R programs of the article, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." Two main R functions (mult.gt.bayes for L=1 assay and mult.gt.bayes_L2 for L=2 assays) are provided, each of which can implement the posterior sampling algorithm and the EM algorithm proposed in Warasi et al. (2022+). This article uses multiplex group testing data for estimating the coinfection probabilities and the assay accuracy probabilities (sensitivity and specificity).
+This repository contains R programs of the article, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." Two main R functions (mult.gt.bayes for L=1 assay and mult.gt.bayes_L2 for L=2 assays) are provided, each of which can implement the posterior sampling algorithm and the EM algorithm proposed in Warasi et al. (2023+). This article uses multiplex group testing data for estimating the coinfection probabilities and the assay accuracy probabilities (sensitivity and specificity).
 
-R code of the simulation examples in the article is split into three files:
+Please note: 
+1. The code will work in Windows with 64-bit R.
 
-1. Simulation1.txt -- to reproduce the estimation results shown in Tables 2-3 (in the article).
+2. The code was executed in a Windows computer using 10 parallel cores. We used the "parallel" package for creating the clusters. The argument "ncores" is used to specify the number of cores to be used.  
+   
+2. The argument "nsims" is used to specify the number of simlated data sets. Throughout the article, we used nsims = 500 data sets. 
+ 
+3. When ncores = 10 and nsims = 500, our code will reproduce the manuscript results. Otherwise, results produced by our code can be somewhat different.
+   
 
-2. Simulation2.txt -- to reproduce the estimation results shown in Table D.1 (in Web Appendix D).
-
-3. Simulation3.txt -- to reproduce the estimation results shown in Tables D.3-D.8 (in Web Appendix D). 
-
-4. Simulation4.txt -- to reproduce the estimation results shown in Table D.9 (in Web Appendix D). 
-
-5. Simulation5.txt -- to reproduce the estimation results shown in Tables D.10-D.11 (in Web Appendix D). 
 
 
 Reference
