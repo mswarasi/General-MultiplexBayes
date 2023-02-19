@@ -1,22 +1,20 @@
 # General-MultiplexBayes
 
-This repository contains R programs of the article, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." Two main R functions (mult.gt.bayes for L=1 assay and mult.gt.bayes_L2 for L=2 assays) are provided, each of which can implement the posterior sampling algorithm and the EM algorithm proposed in Warasi et al. (2023+). This article uses multiplex group testing data for estimating the coinfection probabilities and the assay accuracy probabilities (sensitivity and specificity).
+This repository contains R programs of the article, "Estimating the prevalence of two or more diseases using outcomes from multiplex group testing." Two main R functions (mult.gt.bayes for L=1 assay and mult.gt.bayes_L2 for L=2 assays) are provided, each of which can implement the posterior sampling algorithm and the EM algorithm proposed in Warasi et al. (2023+). This article uses multiplex group testing data for estimating the coinfection probabilities and the assay accuracy probabilities (sensitivity and specificity). The code code and data that can be used to reproduce all results (tables) in the article are uploaded to this repository. 
 
 Please note: 
-1. The code will work in Windows with 64-bit R.
+1. The code requires Windows operating system and 64-bit R.
 
-2. The code was executed in a Windows computer using 10 parallel cores. We used the "parallel" package for creating the clusters. The argument "ncores" is used to specify the number of cores to be used.  
+2. The code was executed in a Windows computer using 10 parallel cores. We used the "parallel" package for creating clusters. The argument "ncores" is used to specify the number of cores to be used.  
    
 2. The argument "nsims" is used to specify the number of simlated data sets. Throughout the article, we used nsims = 500 data sets. 
  
-3. When ncores = 10 and nsims = 500, our code will reproduce the manuscript results. Otherwise, results produced by our code can be somewhat different.
+3. When ncores = 10 and nsims = 500, the code will reproduce the manuscript results. Otherwise, the results can be somewhat different due to the randomness in Monte Carlo simulation.
    
-
-
 
 Reference
 
-Warasi, M., Tebbs, J., McMahan, C., and Bilder, C. (2023+). Estimating the prevalence of two or more diseases using outcomes from multiplex group testing. Under review.
+Warasi, M., Tebbs, J., McMahan, C., and Bilder, C. (2023+). Estimating the prevalence of two or more diseases using outcomes from multiplex group testing. Under revision at Biometrical Journal.
 
 
 ##################################################
