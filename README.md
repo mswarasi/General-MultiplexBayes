@@ -27,7 +27,7 @@ source("SupportPrograms.R")
 
 library(MCMCpack)
 
-#### We simulate data for the urine stratum, where the number of specimens tests is N = 4402: 
+#### We simulate data for the urine stratum, where the number of specimens tested is N = 4402: 
 N <- 4402
 
 #### Pool sizes for the H3 protocol:
