@@ -193,3 +193,6 @@ res.map <-  mult.gt.bayes( Z=Z, p0=p0, delta0=delta0, N=N,
 
 0.9392 0.9802 0.9961 0.9894 
 
+
+#### Note: The example shown above is provided in the R script Example.R
+
