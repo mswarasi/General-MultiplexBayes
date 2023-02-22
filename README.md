@@ -22,7 +22,9 @@ Z <- readRDS( "Urine_GT_H3.csv" )
 
 #### Load the code and package:
 source("MainFunctions.R")
+
 source("SupportPrograms.R")
+
 library(MCMCpack)
 
 #### We simulate data for the urine stratum, where the number of specimens tests is N = 4402: 
