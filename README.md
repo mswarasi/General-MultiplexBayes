@@ -12,7 +12,7 @@ Warasi, M., Tebbs, J., McMahan, C., and Bilder, C. (2023+). Estimating the preva
 
 ##################################################
 
-The code are illustrated using synthetic chlamydia/gonorrhea data observed from a three-stage hierarchical (H3) protocol. First, read in the observed data, import the source code, and provide information about the pool sizes.
+To illustrate the code, we use synthetic data for chlamydia and gonorrhea that were observed using a three-stage hierarchical (H3) protocol. To begin, you should read in the observed data, import the source code, and provide details about the pool sizes.
 
 #### Set the working directory:
 setwd(dir = "C:\\programs")
@@ -31,7 +31,7 @@ N <- 4402
 #### Pool sizes for the H3 protocol:
 protocol <- c(6, 2, 1)
 
-The R functions require that the observed test responses and other information (such as pool size and pool member's ID) are structured in a particular manner so the necessary information can be extracted for the posterior sampling and EM algorithm. The data input needs to be a matrix object Z, the first two columns consist of test responses for diseases 1 & 2, the third column consists of pool sizes, columns 4-5 have the assay sensitivities for diseases 1 & 2, columns 6-7 have specificities for diseases 1 & 2, and column 8 onward must have identification numbers of the individuals assigned to each pool. The missing entries must be filled out by -9 or any negative numbers. A portion of the data is shown below.
+In order for the R functions to work properly, it is important that the observed test responses and accompanying information (such as pool size and pool member IDs) are structured in a specific manner. This is necessary to extract the required information for posterior sampling and the EM algorithm. The input data must be a matrix object called "Z," with the first two columns containing test responses for diseases 1 and 2, the third column containing pool sizes, columns 4-5 containing assay sensitivities for diseases 1 and 2, columns 6-7 containing specificities for diseases 1 and 2, and column 8 onwards containing identification numbers for the individuals assigned to each pool. Any missing entries must be filled with -9 or any negative number. Below is an example of what a portion of the data should look like:
 
 > head( Z )
 
@@ -79,7 +79,7 @@ epsilon <- 0.001          # convergence tolerance
 emmaxit <- 200            # max number of iterations
 
 
-##### The model fitting is illustrated with both known and unknown values of the assay accuracy probabilities as described in Sections 3 and 4 in the article. 
+##### We illustrate the code with both known and unknown values of the assay accuracy probabilities as follows. 
 
 ### Case I: The assay accuracy probabilities are KNOWN
 
@@ -121,7 +121,7 @@ nrow( Z )
 
 ### Case II: The assay accuracy probabilities are UNKNOWN
 
-In this case, the vector of assay accuracy probabilities are assumed to be unknown. To be consistent with this scenario, the assay sensitivities and specificities from columns 4-7 of the data input Z are removed and the missing values are filled out by -9. The head of the data is shown again. 
+In this particular case, the vector of assay accuracy probabilities is assumed to be unknown. In order to accommodate this scenario, we remove the assay sensitivities and specificities from columns 4-7 of the data input matrix Z, and fill in any missing values with -9. The revised data input is shown below.
 
 Z[ ,4:7] <- -9
 
