@@ -12,143 +12,182 @@ Warasi, M., Tebbs, J., McMahan, C., and Bilder, C. (2023+). Estimating the preva
 
 ##################################################
 
-We herein show how the estimation techniques in Warasi et al. (2023+) can be implemented using the R functions provided in this repository. 
-We illustrate the R functions using simulated data. The data are generated using the parameter configuration described in Section 5 (Tables 1-3).
+The code are illustrated using synthetic chlamydia/gonorrhea data observed from a three-stage hierarchical (H3) protocol. First, read in the observed data, import the source code, and provide information about the pool sizes.
 
-
-### Set the working directory:
+#### Set the working directory:
 setwd(dir = "C:\\programs")
 
-### Importing necessary functions:
-source("MainFunction.txt")
+#### Reading in the data:
+Z <- readRDS( "Urine_GT_H3.csv" )
 
-source("SupportPrograms.txt")
+#### Load the code and package:
+source("MainFunctions.R")
+source("SupportPrograms.R")
+library(MCMCpack)
 
-source("MultStageHierData.txt")
+#### We simulate data for the urine stratum, where the number of specimens tests is N = 4402: 
+N <- 4402
 
-source("TwoStageArrayData.txt")
+#### Pool sizes for the H3 protocol:
+protocol <- c(6, 2, 1)
 
-### Package MCMCpack is required:
+The R functions require that the observed test responses and other information (such as pool size and pool member's ID) are structured in a particular manner so the necessary information can be extracted for the posterior sampling and EM algorithm. The data input needs to be a matrix object Z, the first two columns consist of test responses for diseases 1 & 2, the third column consists of pool sizes, columns 4-5 have the assay sensitivities for diseases 1 & 2, columns 6-7 have specificities for diseases 1 & 2, and column 8 onward must have identification numbers of the individuals assigned to each pool. The missing entries must be filled out by -9 or any negative numbers. A portion of the data is shown below.
 
-install.packages("MCMCpack")
+> head( Z )
 
-##################################################
+       Z1 Z2 psz   Se1   Se2   Sp1   Sp2 Indv1 Indv2 Indv3 Indv4 Indv5 Indv6
+       
+Pool:1  0  0   6 0.947 0.947 0.989 0.989     1     2     3     4     5     6
 
-### The data are simulated using function: hier.alg.data(). Parameter configurations for data simulation:
-N <- 5000                       # Sample size
+Pool:2  1  0   6 0.947 0.947 0.989 0.989     7     8     9    10    11    12
 
-H3 <- c(9, 3, 1)                # H3 protocol
+Pool:3  0  0   6 0.947 0.947 0.989 0.989    13    14    15    16    17    18
 
-p <- c(0.95, 0.02, 0.02, 0.01)  # True parameter (Configuration I)
+Pool:4  0  1   6 0.947 0.947 0.989 0.989    19    20    21    22    23    24
 
-Se <- c(.95,.95)                # True Se for diseases 1 & 2
+Pool:5  1  0   6 0.947 0.947 0.989 0.989    25    26    27    28    29    30
 
-Sp <- c(.99,.99)                # True Sp for diseases 1 & 2
+Pool:6  0  0   6 0.947 0.947 0.989 0.989    31    32    33    34    35    36
 
-## Simulating data 
+#### Specify an initial value for p and delta. These values can be specified from historical, pilot study, or any contextual estimate.  
+p0 <- c(.92, .05, .02, .01)
+
+delta0 <- c(.96, .96, .98, .98)
+
+#### Specify the prior hyperparameters:
+p.pr <- c(1, 1, 1, 1)
+
+Se1.pr <- c(1, 1)
+
+Se2.pr <- c(1, 1)
+
+Sp1.pr <- c(1, 1)
+
+Sp2.pr <- c(1, 1)
+
+
+#### Specify the values needed for the EM algorithm:
+
+G <- 12000                # number of Gibbs iterates
+
+burn <- 2000              # burn-in period
+
+pick <- seq(1, 10000, 5)  # keeping every 5th
+
+epsilon <- 0.001          # convergence tolerance
+
+emmaxit <- 200            # max number of iterations
+
+
+##### The model fitting is illustrated with both known and unknown values of the assay accuracy probabilities as described in Sections 3 and 4 in the article. 
+
+### Case I: The assay accuracy probabilities are KNOWN
+
 set.seed( 123 )
 
-protocol <- H3
+#### POSTERIOR SAMPLING 
+post.samp <- mult.gt.bayes( Z=Z, p0=p0, N=N, S=length(protocol), 
+                            p.pr=p.pr, postGit=G, method="Bayes", 
+                            accuracy="known")
 
-out <- hier.alg.data(p=p,N=N,design=protocol,Se=Se,Sp=Sp)
-
-Z <- out$Data        # Simulated data is Z
-
-T <- out$T           # The number of tests expended
-
-
-The simulated data are in the matrix object Z. The data with other information need to be structured in a specific manner. The first two columns consist of test responses for diseases 1 & 2, the third column consists of pool sizes, columns 4-5 must have the assay sensitivities for diseases 1 & 2, columns 6-7 consist of specificities for diseases 1 & 2, and column 8 onward must have identification numbers of the individuals assigned to each pool. The pool identification numbers (i.e., row names) are not used so they do not need to be specified. Parts of a simulated data set are shown in "MainFunction.txt" in this repository. For more information, please refer to the simulation examples provided in Simulation1.txt - Simulation5.txt.
-
-
-head(Z)
-
-
-tail(Z)
-
-
-##################################################
-
-### Model fitting using function: mult.gt.bayes(). Specify the prior hyperparameters. We use flat priors on all parameters as shown below.
-
-p.pr <- rep(1,4)
-
-Se1.pr <- c(1,1)
-
-Se2.pr <- c(1,1)
-
-Sp1.pr <- c(1,1)
-
-Sp2.pr <- c(1,1)
-
-G <- 12000               # number of Gibbs iterates
-
-burn <- 2000             # a burn-in period of 2000
-
-pick <- seq(1,10000,5)   # keeping every 5th
-
-### Choose the convergence tolerance, epsilon, in the EM algorithm. We have used epsilon = 0.001 for all results in the article. 
-epsilon <- 0.001
-
-### Specify the maximum number of iterations, emmaxit, in the EM algorithm. We use emmaxit = 200 throughout the article. Note that the EM algorithm usually converges fast and never reaches the max limit.
-emmaxit <- 200
-
-### Choose an initial value. One can start at the true value, the default value p0=c(.90,.06,.03,.01), delta0=c(.95,.95,.98,.98), or any reasonable choice: 
-
-p0 <- c(.90,.06,.03,.01)    
-
-delta0 <- c(Se, Sp)
-
-## POSTERIOR SAMPLING ALGORITHM    
-res1 <- mult.gt.bayes(p0=p0,delta0=delta0,
-           Z=Z,N=N,S=length(protocol),p.pr=p.pr,
-           Se1.pr=Se1.pr,Se2.pr=Se2.pr,Sp1.pr=Sp1.pr,Sp2.pr=Sp2.pr,
-           postGit=G,method="Bayes",accuracy="unknown")
-
-### Mean estimation results are shown below. This computing is completed in 21 seconds on a computer that has an Intel 2.60 GHz processor and 32 GB of RAM.
-
-p.Mean <- colMeans(res1$prevalence[-(1:burn),][pick,])
-
-> p.Mean
+##### Estimated mean and standard deviation of the posterior distribution for p=(p00, p10, p01, p11):
+> round( colMeans(post.samp$prevalence[-(1:burn), ][pick, ]), 4)
    
-0.9518  0.0191  0.0193  0.0098  
+0.9090 0.0804 0.0061 0.0046 
 
-p.SE <- apply(res1$prevalence[-(1:burn),][pick,],2,sd)
-
-> p.SE
+> round( apply(post.samp$prevalence[-(1:burn), ][pick, ], 2, sd), 4)
    
-0.0034  0.0022  0.0022  0.0014  
-
-delta.Mean <- colMeans(res1$accuracy[-(1:burn),][pick,])
-
-> delta.Mean
-
-0.9365   0.9499   0.9943   0.9914
-
-delta.SE <- apply(res1$accuracy[-(1:burn),][pick,],2,sd)
-
-> delta.SE
-
-0.0169   0.0140   0.0030   0.0033
+0.0046 0.0044 0.0012 0.0011 
 
 
-## MAP ESTIMATION VIA EM ALGORITHM
-res2 <- mult.gt.bayes(p0=p0,delta0=delta0,
-            Z=Z,N=N,S=length(protocol),p.pr=p.pr,
-            Se1.pr=Se1.pr,Se2.pr=Se2.pr,Sp1.pr=Sp1.pr,Sp2.pr=Sp2.pr,
-            emGit=G,emburn=burn,emmaxit=emmaxit,emtol=epsilon,
-            method="MAP",accuracy="unknown")
+#### MAP ESTIMATION
+res.map <- mult.gt.bayes( Z=Z, p0=p0, N=N, S=length(protocol),
+                          p.pr=p.pr, emGit=G, emburn=burn, 
+                          method="MAP", accuracy="known" )
 
-### MAP estimation results are shown below. This computing is completed in 51 seconds that has an Intel 2.60 GHz processor and 32 GB of RAM.
+##### MAP estimation results for p=(p00, p10, p01, p11):
+> round( res.map$prevalence, 4)
+        
+[1,] 0.9097 0.0801 0.0059 0.0044
 
-p.MAP <- res2$prevalence
 
-> p.MAP
+##### Number of tests expended:
 
-0.9522  0.0190  0.0191  0.0097
+nrow( Z )
 
-delta.MAP <- res2$accuracy
+[1] 2373
 
-> delta.MAP
 
-0.9371  0.9521  0.9957  0.9925
+
+### Case II: The assay accuracy probabilities are UNKNOWN
+
+In this case, the vector of assay accuracy probabilities are assumed to be unknown. To be consistent with this scenario, the assay sensitivities and specificities from columns 4-7 of the data input Z are removed and the missing values are filled out by -9. The head of the data is shown again. 
+
+Z[ ,4:7] <- -9
+
+> head( Z )
+
+       Z1 Z2 psz Se1 Se2 Sp1 Sp2 Indv1 Indv2 Indv3 Indv4 Indv5 Indv6
+       
+Pool:1  0  0   6  -9  -9  -9  -9     1     2     3     4     5     6
+
+Pool:2  1  0   6  -9  -9  -9  -9     7     8     9    10    11    12
+
+Pool:3  0  0   6  -9  -9  -9  -9    13    14    15    16    17    18
+
+Pool:4  0  1   6  -9  -9  -9  -9    19    20    21    22    23    24
+
+Pool:5  1  0   6  -9  -9  -9  -9    25    26    27    28    29    30
+
+Pool:6  0  0   6  -9  -9  -9  -9    31    32    33    34    35    36
+
+
+
+#### POSTERIOR SAMPLING 
+post.samp <- mult.gt.bayes( Z=Z, p0=p0, delta0=delta0, N=N, 
+                 S=length(protocol), p.pr=p.pr, Se1.pr=Se1.pr, Se2.pr=Se2.pr,
+                 Sp1.pr=Sp1.pr, Sp2.pr=Sp2.pr, postGit=G, method="Bayes", 
+                 accuracy="unknown" )
+                 
+                 
+##### Estimated mean and standard deviation of the posterior distribution for p=(p00, p10, p01, p11):
+
+> round( colMeans(post.samp$prevalence[-(1:burn), ][pick, ]), 4)
+
+0.9064 0.0831 0.0059 0.0046 
+
+> round( apply(post.samp$prevalence[-(1:burn), ][pick, ], 2, sd), 4)
+
+0.0050 0.0047 0.0012 0.0010 
+
+
+##### Estimated mean and standard deviation of the posterior distribution for delta=(Se1, Se2, Sp1, Sp2):
+
+> round( colMeans(post.samp$accuracy[-(1:burn), ][pick, ]), 4)
+
+0.9367 0.9686 0.9956 0.9890 
+
+> round( apply(post.samp$accuracy[-(1:burn), ][pick, ], 2, sd), 4)
+
+0.0111 0.0193 0.0035 0.0023 
+
+
+#### MAP ESTIMATION
+res.map <-  mult.gt.bayes( Z=Z, p0=p0, delta0=delta0, N=N, 
+                 S=length(protocol), p.pr=p.pr, Se1.pr=Se1.pr, Se2.pr=Se2.pr, 
+                 Sp1.pr=Sp1.pr, Sp2.pr=Sp2.pr, emGit=G, emburn=burn, 
+                 method="MAP", accuracy="unknown" )
+
+
+##### MAP estimation results for p=(p00, p10, p01, p11):
+
+> round( res.map$prevalence, 4)
+
+0.9075 0.0825 0.0056 0.0043 
+
+##### MAP estimation results for delta=(Se1, Se2, Sp1, Sp2):
+
+> round( res.map$accuracy, 4)
+
+0.9392 0.9802 0.9961 0.9894 
 
