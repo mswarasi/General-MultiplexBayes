@@ -2,7 +2,7 @@
 ##############################################
 
 ## In this R script, we provide an example, 
-## which is used to the README.md file.
+## which is used in the README.md file.
 
 ##############################################
 
