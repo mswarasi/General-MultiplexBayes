@@ -8,9 +8,9 @@
 #
 # Usage
 # -----
-# mult.gt.bayes(Z, p0=c(.90,.06,.03,.01), delta0=c(.95,.95,.98,.98),
-#               N, S, p.pr=rep(1,4), Se1.pr=c(1,1),
-#               Se2.pr=c(1,1), Sp1.pr=c(1,1), Sp2.pr=c(1,1), postGit=6000,
+# mult.gt.bayes(Z, p0=c(.92, .05, .02, .01), delta0=c(.96, .96, .98, .98),
+#               N, S, p.pr=rep(1, 4), Se1.pr=c(1, 1),
+#               Se2.pr=c(1, 1), Sp1.pr=c(1, 1), Sp2.pr=c(1, 1), postGit=6000,
 #               emGit=6000, emburn=1000, emmaxit=200, emtol=1e-03,
 #               method=c("MAP", "Bayes"), accuracy=c("unknown", "known"))
 #
@@ -84,13 +84,13 @@
 #               indicates the iteration reaches emmaxit. For Bayes, convergence is always 0.
 #
 #
-mult.gt.bayes <- function(Z, p0=c(.92,.05,.02,.01), delta0=c(.96, .96, .98, .98),
+mult.gt.bayes <- function(Z, p0=c(.92, .05, .02, .01), delta0=c(.96, .96, .98, .98),
                       N, S, p.pr=rep(1, 4), Se1.pr=c(1, 1),
                       Se2.pr=c(1, 1), Sp1.pr=c(1, 1), Sp2.pr=c(1, 1), postGit=6000,
                       emGit=6000, emburn=1000, emmaxit=200, emtol=1e-03,
                       method=c("MAP", "Bayes"), accuracy=c("unknown", "known")){
 
-  Ymul <- rmultinom(N,1,p0)
+  Ymul <- rmultinom(N, 1, p0)
   Yt <- cbind(Ymul[2, ] + Ymul[4, ], Ymul[3, ] + Ymul[4, ])
 
   method <- match.arg(method)
@@ -131,10 +131,10 @@ mult.gt.bayes <- function(Z, p0=c(.92,.05,.02,.01), delta0=c(.96, .96, .98, .98)
 #
 # Usage
 # -----
-# mult.gt.bayes_L2(Z, p0=c(.92,.05,.02,.01), delta0=c(rep(.96,2),rep(.98,2),rep(.96,2),rep(.98,2)),
-#                  N, S, p.pr=rep(1,4), se.pr=matrix(1,2,4), sp.pr=matrix(1,2,4),
+# mult.gt.bayes_L2(Z, p0=c(.92, .05, .02, .01), delta0=c(rep(.96, 2), rep(.98, 2), rep(.96, 2), rep(.98, 2)),
+#                  N, S, p.pr=rep(1, 4), se.pr=matrix(1, 2, 4), sp.pr=matrix(1, 2, 4),
 #                  postGit=6000, emGit=6000, emburn=1000, emmaxit=100, emtol=1e-03,
-#                  method=c("MAP","Bayes"))
+#                  method=c("MAP", "Bayes"))
 #							 
 #
 # Arguments
@@ -164,9 +164,9 @@ mult.gt.bayes <- function(Z, p0=c(.92,.05,.02,.01), delta0=c(.96, .96, .98, .98)
 # method   : Estimation method to be used, either "MAP" or "Bayes". Defaults to "MAP".
 #
 #
-mult.gt.bayes_L2 <- function(Z, p0=c(.92,.05,.02,.01), 
-                             delta0=c(rep(.96,2),rep(.98,2),rep(.96,2),rep(.98,2)),
-                             N, S, p.pr=rep(1,4), se.pr=matrix(1,2,4), sp.pr=matrix(1,2,4),
+mult.gt.bayes_L2 <- function(Z, p0=c(.92, .05, .02, .01), 
+                             delta0=c(rep(.96, 2), rep(.98, 2), rep(.96, 2), rep(.98, 2)),
+                             N, S, p.pr=rep(1, 4), se.pr=matrix(1, 2, 4), sp.pr=matrix(1, 2, 4),
                              postGit=6000, emGit=6000, emburn=1000, emmaxit=100, emtol=1e-03,
                              method=c("MAP", "Bayes")){
 
