@@ -7,7 +7,9 @@ To reproduce all results of the article, use the zip folder "bimj.202200270-sup-
 
 Reference
 
-Warasi, M., Tebbs, J., McMahan, C., and Bilder, C. (2023). Estimating the prevalence of two or more diseases using outcomes from multiplex group testing. *Biometrical Journal*. 2200270.
+Warasi, M., Tebbs, J., McMahan, C., and Bilder, C. (2023). Estimating the prevalence of two or more diseases using outcomes from multiplex group testing. *Biometrical Journal*, 2200270. 
+
+Paper link: https://onlinelibrary.wiley.com/doi/10.1002/bimj.202200270
 
 
 ##################################################
